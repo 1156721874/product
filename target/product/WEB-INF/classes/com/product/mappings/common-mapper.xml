@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.product.mapper.CommonMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<select id="getChart" parameterType="java.lang.String" resultType="java.lang.String">
+		select itemvalue from product_chart where itemid= #{key}
+	</select>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="java.lang.String">
+		select count(*) from ${table}
+		<if test="where != null and where !=''">
+			where 1=1  ${where}
+		</if>
+	</select>
+	
+	<select id="getDictItemByGroupId" parameterType="java.lang.String" resultType="com.product.bean.common.DictItem">
+	    select itemid dictid , itemname dictname from dict_group a ,dict_item b where a.groupid=b.groupid and a.groupid=#{groupid}
+	</select>
+	
+	<select id="getDictItemByGidAndIid" parameterType="java.util.Map" resultType="com.product.bean.common.DictItem">
+	    select b.itemid dictid , b.itemname dictname from dict_group a ,dict_item b where a.gruopid=b.gruopid
+	    <if test="gruopid != null and gruopid !=''">
+	     and a.gruopid=#{gruopid}
+	    </if>
+	    <if test="itemid !=null and itemid!=''">
+	     and b.itemid=#{itemid}
+	    </if>
+	</select>
+	    
+	
+</mapper>

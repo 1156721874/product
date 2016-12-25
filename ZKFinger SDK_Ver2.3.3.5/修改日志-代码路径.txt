@@ -1,0 +1,90 @@
+ =================================修改日志=============================
+》》》》》2015-11-26
+/product/src/main/webapp/WEB-INF/jsp/businessmana/receivingmana/list.jsp
+/product/src/main/webapp/js/businessmana/receivingmana/list.js
+/product/src/main/java/com/product/controller/BusinessController.java
+/product/src/main/java/com/product/mappings/receivemana-mapper.xml
+
+
+/product/src/main/java/com/product/controller/ReportController.java
+/product/src/main/webapp/WEB-INF/jsp/report/dayreport.jsp
+/product/src/main/webapp/js/report/report.js
+/product/src/main/java/com/product/mappings/report-mapper.xml
+新增：
+/product/src/main/webapp/WEB-INF/jsp/report/printChargePage.jsp
+=============================================================================
+》》》》》2015-11-28
+报表：
+	/product/src/main/webapp/WEB-INF/jsp/report/dayreport.jsp
+	/product/src/main/webapp/js/report/report.js
+	/product/src/main/java/com/product/controller/ReportController.java
+	新增：
+	/product/src/main/webapp/WEB-INF/jsp/report/printOutCargoes.jsp
+收费：
+        /product/src/main/webapp/js/charge/chargeManager.js(修复收费管理收费为0时显示问题)
+        /product/src/main/java/com/product/mappings/charge-mapper.xml（修复收费管理中收货人不显示bug，line: 13--14）
+=============================================================================
+》》》》》2015-12-02
+/product/src/main/webapp/WEB-INF/jsp/businessmana/confirmationmana/list.jsp
+/product/src/main/webapp/js/businessmana/confirmationmana/list.js
+/product/src/main/java/com/product/controller/BusinessController.java
+/product/src/main/java/com/product/service/ReceivingManaImpl.java
+/product/src/main/java/com/product/mapper/ReceivingManaMapper.java
+/product/src/main/java/com/product/mappings/receivemana-mapper.xml
+
+/product/src/main/webapp/js/report/report.js（修复报表js瑕疵）
+
+=============================================================================
+》》》》》2015-12-04
+
+!!!!!!!!!!!!!!!重要:为保证部署成功率，先挨个文件覆盖war包，再挨个文件覆盖product目录！！！！！！
+
+第一步：先在数据库执行如下SQL：
+alter table receivemgrdetail modify fee DOUBLE(9,3) default 0.0 comment '货物费用';
+alter table receivemgrdetail modify irradednum DOUBLE(9,3) default 0.0 comment '已照数量';
+alter table receivemgrdetail modify paid DOUBLE(9,3) default 0.0 not null  comment '已付费用';
+alter table receivemgrdetail modify  unpaid DOUBLE(9,3) default 0.0 not null  comment '未付费用,默认是fee的值';
+alter table irradiation modify  irradednum DOUBLE(9,3) default 0.0 comment '辐照数量';
+
+INSERT INTO `dict_group` VALUES ('paytype', '收费方式');
+INSERT INTO `dict_item` VALUES ('cash', 'paytype', '现金');
+INSERT INTO `dict_item` VALUES ('transfer', 'paytype', '转账');
+INSERT INTO `dict_item` VALUES ('other', 'paytype', '其他');
+alter table chargelog add  paytype varchar(60) comment '付款方式';
+
+第二步：收获确认输入小数无法保存问题
+/product/src/main/java/com/product/entity/ReceiveInfo.java
+/product/src/main/java/com/product/controller/BusinessControllerHelper.java
+/product/src/main/webapp/js/businessmana/confirmationmana/list.js
+/product/src/main/java/com/product/mappings/receivemana-mapper.xml （备注无法修改问题）
+/product/src/main/webapp/js/businessmana/shippingmana/list.js （连带修改出货）
+
+第三步：收费管理添加收费类型
+/product/src/main/webapp/WEB-INF/jsp/charge/chargeManager.jsp
+/product/src/main/webapp/js/charge/chargeManager.js
+/product/src/main/java/com/product/controller/ChargeController.java
+/product/src/main/java/com/product/entity/ChargeInfo.java
+/product/src/main/java/com/product/mappings/charge-mapper.xml
+
+第四步：报表添加根据单位搜索功能
+/product/src/main/java/com/product/controller/ReportController.java
+/product/src/main/java/com/product/mappings/report-mapper.xml
+/product/src/main/webapp/WEB-INF/jsp/report/dayreport.jsp
+/product/src/main/webapp/WEB-INF/jsp/report/printChargePage.jsp
+/product/src/main/webapp/WEB-INF/jsp/report/printOutCargoes.jsp
+/product/src/main/webapp/WEB-INF/jsp/report/printpage.jsp
+/product/src/main/webapp/js/report/report.js
+
+
+此文件是系统SQL定义文档，可选择性发布，主要是与开发机器的保持一致
+/product/src/main/resources/sql/product.sql
+
+====================2015-12-28
+（1）收费为0的在报表不显示
+（2）收获去掉一周、半月、一月
+
+（1）/product/src/main/java/com/product/mappings/report-mapper.xml
+（2）/product/src/main/webapp/WEB-INF/jsp/businessmana/receivingmana/list.jsp
+
+
+

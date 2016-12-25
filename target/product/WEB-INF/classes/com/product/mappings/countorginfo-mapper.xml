@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.product.mapper.CountOrginfoMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<select id="getAllOrginfo" resultType="CountOrgInfo">
+		select * from orginfo
+	</select>
+	<sql id="selectorginfo">
+		select
+		id,orgname,mask from orginfo
+	</sql>
+	<select id="getorginfo" parameterType="java.util.Map"
+		resultType="CountOrgInfo">
+		<include refid="selectorginfo" />
+		<if test="orgname != null and orgname!=''">
+			where orgname like concat('%', #{orgname}, '%')
+		</if>
+		 <if test="pageNow != null and pageSize != null">
+		  limit ${pageNow} , ${pageSize}
+		 </if>
+	</select>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="java.lang.String">
+		select count(*) from ${table}
+		<if test="where != null and where !=''">
+			where ${where}
+		</if>
+	</select>
+	
+	<select id="isrepeat" parameterType="java.lang.String"  resultType="java.lang.Integer">
+		select count(*) from orginfo where orgname=#{addorgoname}
+	</select>
+	<!-- str_to_date(#{irradtime},'%Y-%m-%d'):#{irradtime}可以为空字符串，相应的出入的是空字符串 -->
+	<insert id="addcountOrgInfo" parameterType="CountOrgInfo">
+		insert into orginfo(orgname,mask) values(#{orgname},#{mask})	    
+	</insert>
+
+	<select id="getOneCargo" parameterType="java.util.Map" resultType="CountOrgInfo">
+	    <include refid="selectorginfo" />  where id=#{id} and orgname=#{orgname} 
+	</select>
+	
+	<update id="saveEditCargo" parameterType="CountOrgInfo">
+	    update orginfo set orgname=#{orgname}, mask=#{mask} where orgname=#{orgname}  
+	</update>
+	
+	<delete id="deleteByAttribute" parameterType="java.util.Map" >
+	    delete from orginfo where id=#{id} and orgname=#{orgname}  
+	</delete>
+
+</mapper>

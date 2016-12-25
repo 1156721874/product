@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.product.mapper.ShippingInfoMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<select id="getAllOrgs" resultType="ShippingInfo">
+		select * from shippinginfo
+	</select>
+    <sql id="selectshipinfo">
+		select
+		id,orgname,mask from shippinginfo
+	</sql>
+	<select id="getshipinfo" parameterType="java.util.Map"
+		resultType="ShippingInfo">
+		<include refid="selectshipinfo" />
+		<if test="orgname != null and orgname!=''">f
+			where orgname like concat('%', #{orgname}, '%')
+		</if>
+		 <if test="pageNow != null and pageSize != null">
+		  limit ${pageNow} , ${pageSize}
+		 </if>
+	</select>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="java.lang.String">
+		select count(*) from ${table}
+		<if test="where != null and where !=''">
+			where ${where}
+		</if>
+	</select>
+	
+	<select id="isrepeat" parameterType="java.lang.String"  resultType="java.lang.Integer">
+		select count(*) from shippinginfo where orgname=#{addorgoname}
+	</select>
+	<!-- str_to_date(#{irradtime},'%Y-%m-%d'):#{irradtime}可以为空字符串，相应的出入的是空字符串 -->
+	<insert id="addship" parameterType="ShippingInfo">
+		insert into shippinginfo(orgname,mask) values(#{orgname},#{mask})	    
+	</insert>
+
+	<select id="getOneShip" parameterType="java.util.Map" resultType="ShippingInfo">
+	    <include refid="selectshipinfo" />  where id=#{id} and orgname=#{orgname} 
+	</select>
+	
+	<update id="saveEditShip" parameterType="ShippingInfo">
+	    update shippinginfo set orgname=#{orgname}, mask=#{mask} where orgname=#{orgname}  
+	</update>
+	
+	<delete id="deleteByAttribute" parameterType="java.util.Map" >
+	    delete from shippinginfo where id=#{id} and orgname=#{orgname}  
+	</delete>
+</mapper>
